@@ -5,7 +5,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import real.peha.fun.commands.*;
-// import real.peha.fun.listeners.*;
+import real.peha.fun.listeners.*;
 
 public class WorldsPlugin extends JavaPlugin {
     private CommandsHandler commandsHandler = new CommandsHandler();
@@ -27,10 +27,13 @@ public class WorldsPlugin extends JavaPlugin {
         setInstance(this);
 
         // Register listeners
-        // SpawnMobListener.listen(this);
+        PlayerBedEnterListener.listen(this);
+        BlockPlaceListener.listen(this);
 
         // Register commands
         commandsHandler.register(new String[]{"jopa"}, new WorldsPluginCommand());
+
+        Worlds.loadWorlds();
 
         getLogger().info("Started");
     }

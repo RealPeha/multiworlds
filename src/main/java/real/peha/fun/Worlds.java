@@ -1,74 +1,97 @@
 package real.peha.fun;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.bukkit.WorldCreator;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.WorldType;
+import org.bukkit.command.CommandSender;
 
 public class Worlds {
-    public static void generate(Map<String, Object> worldConfig) {
-        String worldId = worldConfig.get("id").toString();
-        String type = worldConfig.get("type").toString();
-        String generatorSettings = null;
-        Boolean hasStructures = (Boolean) worldConfig.get("hasStructures");
-        int env = (int) worldConfig.get("env");
+    public static String generate(Map<?, ?> worldConfig) {
+        return generate(null, worldConfig);
+    }
 
-        if (worldConfig.containsKey("generatorSettings")) {
-            generatorSettings = worldConfig.get("generatorSettings").toString();
+    public static String generate(CommandSender sender, Map<?, ?> worldConfig) {
+        String worldId = worldConfig.get("id").toString();
+
+        if (worldId.equals("logs") || worldId.equals("world") || worldId.equals("world_nether") || worldId.equals("world_the_end")) {
+            return "Нельзя создать мир с такими названием";
         }
+
+        Object type = worldConfig.get("type");
+        Object generator = worldConfig.get("generator");
+        Object generatorSettings = worldConfig.get("generatorSettings");
+        Object hasStructures = worldConfig.get("hasStructures");
+        Object env = worldConfig.get("env");
 
         WorldCreator wc = new WorldCreator(worldId);
 
-        World.Environment environment = World.Environment.NORMAL;
+        if (!Objects.isNull(env)) {
+            try {
+                World.Environment environment = World.Environment.valueOf(env.toString().toUpperCase());
 
-        if (env == 1) {
-            environment = World.Environment.THE_END;
-        } else if (env == -1) {
-            environment = World.Environment.NETHER;
-        }
-
-        WorldType worldType = WorldType.getByName(type);
-
-        wc.environment(environment);
-
-        if (worldType != null) {
-            wc.type(worldType);
-        } else {
-            wc.type(WorldType.NORMAL);
-        }
-
-        if (type == "flat") {
-            if (generatorSettings == null) {
-
-            } else {
-                wc.generatorSettings(generatorSettings);
+                wc.environment(environment);
+            } catch (Exception ex) {
+                return "Указано неправильное окружение";
             }
         }
 
-        wc.generateStructures(hasStructures);
+        if (!Objects.isNull(type)) {
+            try {
+                WorldType worldType = WorldType.valueOf(type.toString().toUpperCase());
 
-        wc.createWorld();
+                wc.type(worldType);
+
+                if (worldType == WorldType.FLAT && !Objects.isNull(generatorSettings)) {
+                    wc.generatorSettings(generatorSettings.toString());
+                }
+            } catch (Exception ex) {
+                return "Указан неправильный тип мира";
+            }
+        }
+
+        if (!Objects.isNull(generator)) {
+            wc.generator(generator.toString(), sender);
+        }
+
+        if (!Objects.isNull(hasStructures)) {
+            wc.generateStructures((Boolean) hasStructures);
+        }
+
+        try {
+            wc.createWorld();
+        } catch (Exception ex) {
+            return "Произошла ошибка при генерации мира";
+        }
+
+        return null;
     }
 
     public static List<Map<?, ?>> getWorldsList() {
         return Config.getSection("worlds");
     }
 
-    public static Boolean isExist(String worldId) {
+    public static Map<?, ?> find(String worldId) {
         List<Map<?, ?>> worlds = getWorldsList();
 
         for (Map<?, ?> world : worlds) {
             String id = world.get("id").toString().trim();
 
             if (id.equals(worldId)) {
-                return true;
+                return world;
             }
         }
 
-        return false;
+        return null;
+    }
+
+    public static Boolean isExist(String worldId) {
+        return find(worldId) != null;
     }
 
     public static void addToList(Map<String, Object> worldConfig) {
@@ -79,18 +102,39 @@ public class Worlds {
         Config.set("worlds", worlds);
     }
 
-    public static void delete(String worldId) {
+    public static void deleteFromList(String worldId) {
         List<Map<?, ?>> worlds = getWorldsList();
 
-        for (Map<?, ?> world : worlds) {
+        for (Iterator<Map<?, ?>> iter = worlds.iterator(); iter.hasNext(); ) {
+            Map<?, ?> world = iter.next();
             String id = world.get("id").toString().trim();
 
             if (id.equals(worldId)) {
-                worlds.remove(world);
+                iter.remove();
             }
         }
 
         Config.set("worlds", worlds);
+    }
+
+    public static void loadWorlds() {
+        List<Map<?, ?>> worlds = Worlds.getWorldsList();
+
+        for (Map<?, ?> world: worlds) {
+            Worlds.load(world.get("id").toString());
+        }
+    }
+
+    public static void load(String worldId) {
+        load(null, worldId);
+    }
+
+    public static void load(CommandSender sender, String worldId) {
+        Map<?, ?> world = find(worldId);
+
+        if (world != null) {
+            generate(sender, world);
+        }
     }
 
     public static void unload(String worldId) {

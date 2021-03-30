@@ -6,7 +6,7 @@ import org.bukkit.command.CommandSender;
 import real.peha.fun.BaseCommand;
 import real.peha.fun.Worlds;
 
-public class WorldUnloadCommand implements BaseCommand {
+public class WorldLoadCommand implements BaseCommand {
     public Boolean execute(CommandSender sender, String command, String alias, String[] args) {
         if (args.length == 0) {
             return false;
@@ -14,13 +14,13 @@ public class WorldUnloadCommand implements BaseCommand {
 
         String worldId = args[0];
 
-        if (Bukkit.getWorld(worldId) == null) {
-            sender.sendMessage("Этот мир не загружен");
+        if (Bukkit.getWorld(worldId) != null) {
+            sender.sendMessage("Этот мир уже загружен");
 
             return true;
         }
 
-        Worlds.unload(worldId);
+        Worlds.load(sender, worldId);
 
         return true;
     }

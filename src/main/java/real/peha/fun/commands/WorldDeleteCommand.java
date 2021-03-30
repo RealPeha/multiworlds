@@ -26,7 +26,7 @@ public class WorldDeleteCommand implements BaseCommand {
             deleteDirectory(folder);
         }
 
-        Worlds.delete(worldId);
+        Worlds.deleteFromList(worldId);
 
         return true;
     }

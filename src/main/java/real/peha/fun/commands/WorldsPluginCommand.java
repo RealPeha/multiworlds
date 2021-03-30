@@ -14,8 +14,11 @@ public class WorldsPluginCommand implements BaseCommand {
         commandsHandler.register(new String[]{"reload", "r"}, new ReloadCommand());
         commandsHandler.register(new String[]{"create", "c"}, new WorldCreateCommand());
         commandsHandler.register(new String[]{"list", "ls"}, new WorldListCommand());
-        commandsHandler.register(new String[]{"unload"}, new WorldUnloadCommand());
         commandsHandler.register(new String[]{"delete", "d"}, new WorldDeleteCommand());
+        commandsHandler.register(new String[]{"info", "i"}, new WorldInfoCommand());
+        commandsHandler.register("load", new WorldLoadCommand());
+        commandsHandler.register("unload", new WorldUnloadCommand());
+        commandsHandler.register("bed", new WorldBedCommand());
     }
 
     public Boolean execute(CommandSender sender, String command, String alias, String[] args) {
