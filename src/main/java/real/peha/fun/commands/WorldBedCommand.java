@@ -19,7 +19,7 @@ public class WorldBedCommand implements BaseCommand {
 
         String worldId = args[0];
 
-        if (!Worlds.isExist(worldId)) {
+        if (!Worlds.isExistOrSystem(worldId)) {
             sender.sendMessage("Мир " + worldId + " не найден");
 
             return true;

@@ -18,7 +18,7 @@ public class Worlds {
     public static void generate(CommandSender sender, Map<?, ?> worldConfig) throws Exception {
         String worldId = worldConfig.get("id").toString();
 
-        if (worldId.equals("logs") || worldId.equals("world") || worldId.equals("world_nether") || worldId.equals("world_the_end")) {
+        if (getSystemWorlds().contains(worldId)) {
             throw new Exception("Нельзя создать мир с такими названием");
         }
 
@@ -81,6 +81,10 @@ public class Worlds {
         return find(worldId) != null;
     }
 
+    public static Boolean isExistOrSystem(String worldId) {
+        return getSystemWorlds().contains(worldId) || find(worldId) != null;
+    }
+
     public static void addToList(Map<String, Object> worldConfig) {
         List<Map<?, ?>> worlds = getWorldsList();
 
@@ -101,23 +105,25 @@ public class Worlds {
         List<Map<?, ?>> worlds = Worlds.getWorldsList();
 
         for (Map<?, ?> world: worlds) {
-            Worlds.load(sender, world.get("id").toString());
+            String worldId = world.get("id").toString();
+
+            try {
+                Worlds.load(sender, worldId);
+            } catch (Exception ex) {
+                sender.sendMessage("Мир " + worldId + " не загружен. Ошибка: " + ex.getMessage());
+            }
         }
     }
 
-    public static void load(String worldId) {
+    public static void load(String worldId) throws Exception {
         load(null, worldId);
     }
 
-    public static void load(CommandSender sender, String worldId) {
+    public static void load(CommandSender sender, String worldId) throws Exception {
         Map<?, ?> world = find(worldId);
 
         if (world != null) {
-            try {
-                generate(sender, world);
-            } catch (Exception ex) {
-                Bukkit.getLogger().warning(worldId + ": " + ex.getMessage());
-            }
+            generate(sender, world);
         }
     }
 
@@ -127,5 +133,9 @@ public class Worlds {
 
     public static void unload(String worldId, Boolean save) {
         Bukkit.getServer().unloadWorld(worldId, save);
+    }
+
+    public static List<String> getSystemWorlds() {
+        return Config.getStringList("system-worlds");
     }
 }

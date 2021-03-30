@@ -28,6 +28,8 @@ public class WorldDeleteCommand implements BaseCommand {
 
         Worlds.deleteFromList(worldId);
 
+        sender.sendMessage("Мир " + worldId + " успешно удален");
+
         return true;
     }
 

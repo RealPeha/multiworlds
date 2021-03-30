@@ -11,6 +11,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerBedEnterEvent;
+import org.bukkit.material.Bed;
 
 import real.peha.fun.Beds;
 import real.peha.fun.WorldsPlugin;
@@ -24,9 +25,15 @@ public final class PlayerBedEnterListener implements Listener {
 
 	@EventHandler
 	public void PlayerBedEnter(PlayerBedEnterEvent e) {
-		Block bed = e.getBed();
-		String bedId = Beds.getId(bed);
+		Block block = e.getBed();
+		Bed bed = (Bed) block.getState().getData();
 
+		Location bedLocation = bed.isHeadOfBed()
+			? block.getLocation()
+			: block.getRelative(bed.getFacing()).getLocation();
+
+
+		String bedId = Beds.getId(bedLocation);
 		Map<?, ?> bedConfig = Beds.find(bedId);
 
 		if (bedConfig != null) {
@@ -35,14 +42,14 @@ public final class PlayerBedEnterListener implements Listener {
 			World world = Bukkit.getServer().getWorld(worldId);
 
 			if (world != null) {
-				player.sendMessage("Teleporting to " + worldId + " world...");
+				player.sendMessage("Телепортирую в мир " + worldId + "...");
 
 				Location spawn = world.getSpawnLocation();
 				Location loc = new Location(world, spawn.getX(), spawn.getY(), spawn.getZ());
 
 				player.teleport(loc);
 			} else {
-				player.sendMessage("В этот мир нельзя телепортироваться");
+				player.sendMessage("В этот мир нельзя телепортироваться. Возможно он выгружен или удален");
 			}
 		}
 	}

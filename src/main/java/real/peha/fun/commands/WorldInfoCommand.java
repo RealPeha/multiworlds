@@ -9,6 +9,10 @@ import real.peha.fun.Worlds;
 
 public class WorldInfoCommand implements BaseCommand {
     public Boolean execute(CommandSender sender, String command, String alias, String[] args) {
+        if (args.length == 0) {
+            return false;
+        }
+
         Map<?, ?> world = Worlds.find(args[0]);
         
         if (world == null) {

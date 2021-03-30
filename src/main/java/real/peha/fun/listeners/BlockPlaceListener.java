@@ -5,12 +5,14 @@ import org.bukkit.event.Listener;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.material.Bed;
 
 import real.peha.fun.Beds;
 import real.peha.fun.Worlds;
@@ -34,8 +36,18 @@ public final class BlockPlaceListener implements Listener {
 			if (meta.hasLore()) {
 				String worldId = meta.getLore().get(0);
 
-				if (Worlds.isExist(worldId)) {
-					String bedId = Beds.getId(block);
+				player.sendMessage(worldId);
+
+				if (Worlds.isExistOrSystem(worldId)) {
+					Bed bed = (Bed) block.getState().getData();
+
+					Location bedLocation = bed.isHeadOfBed()
+						? block.getLocation()
+						: block.getRelative(bed.getFacing()).getLocation();
+
+					String bedId = Beds.getId(bedLocation);
+
+					player.sendMessage(bedId);
 					
 					Map<String, Object> bedConfig = new HashMap<>();
 
@@ -43,6 +55,8 @@ public final class BlockPlaceListener implements Listener {
 					bedConfig.put("worldId", worldId);
 
 					Beds.addToList(bedConfig);
+
+					player.sendMessage("Кровать в мир " + worldId + " создана");
 				} else {
 					player.sendMessage("Мир " + worldId + " не существует");
 				}

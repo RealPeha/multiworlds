@@ -24,7 +24,15 @@ public class WorldLoadCommand implements BaseCommand {
             return true;
         }
 
-        Worlds.load(sender, worldId);
+        try {
+            sender.sendMessage("Загружаю мир...");
+
+            Worlds.load(sender, worldId);
+
+            sender.sendMessage("Успех");
+        } catch (Exception ex) {
+            sender.sendMessage(ex.getMessage());
+        }
 
         return true;
     }

@@ -7,14 +7,9 @@ import real.peha.fun.BaseCommand;
 
 public class ReloadCommand implements BaseCommand {
     public Boolean execute(CommandSender sender, String command, String alias, String[] args) {
-        WorldsPlugin plugin = WorldsPlugin.getInstance();
+        WorldsPlugin.getInstance().reloadConfig();
 
-        if (sender.hasPermission("worldsplugin.reload")) {
-            plugin.reloadConfig();
-            sender.sendMessage("Настройки обновлены");
-        } else {
-            sender.sendMessage(plugin.getConfig().getString("no-permission-message").replaceAll("&", "§"));
-        }
+        sender.sendMessage("Настройки обновлены");
 
         return true;
     }

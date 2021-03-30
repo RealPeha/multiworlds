@@ -42,7 +42,7 @@ public class WorldsPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        this.saveConfig();
+        saveConfig();
     }
 
     @Override

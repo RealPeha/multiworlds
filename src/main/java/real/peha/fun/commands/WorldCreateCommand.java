@@ -28,6 +28,9 @@ public class WorldCreateCommand implements BaseCommand {
 
         @Parameter(names = {"--structures", "-s"})
         private Boolean hasStructures = false;
+
+        @Parameter(names = {"--init", "-i"})
+        private Boolean onlyInit = false;
     }
 
     public Boolean execute(CommandSender sender, String command, String alias, String[] args) {
@@ -59,19 +62,21 @@ public class WorldCreateCommand implements BaseCommand {
         worldConfig.put("generatorSettings", commandArgs.generatorSettings);
         worldConfig.put("generator", commandArgs.generator);
 
-        sender.sendMessage("Мир генерируется...");
+        if (!commandArgs.onlyInit) {
+            sender.sendMessage("Мир генерируется...");
 
-        try {
-            Worlds.generate(sender, worldConfig);
-        } catch (Exception ex) {
-            sender.sendMessage("Ошибка: " + ex.getMessage());
+            try {
+                Worlds.generate(sender, worldConfig);
+            } catch (Exception ex) {
+                sender.sendMessage("Ошибка: " + ex.getMessage());
 
-            return true;
+                return true;
+            }
         }
 
         Worlds.addToList(worldConfig);
 
-        sender.sendMessage("Упех");
+        sender.sendMessage("Успех");
 
         return true;
     }

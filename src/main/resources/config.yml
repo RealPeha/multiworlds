@@ -2,5 +2,10 @@ no-permission: У вас нет прав на использование это�
 
 worlds-preload: true
 
+system-worlds:
+  - logs
+  - world
+  - world_nether
+  - world_the_end
 beds:
 worlds:
