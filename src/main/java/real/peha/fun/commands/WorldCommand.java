@@ -7,10 +7,10 @@ import org.bukkit.command.CommandSender;
 import real.peha.fun.BaseCommand;
 import real.peha.fun.CommandsHandler;
 
-public class WorldsPluginCommand implements BaseCommand {
+public class WorldCommand implements BaseCommand {
     private CommandsHandler commandsHandler = new CommandsHandler();
 
-    public WorldsPluginCommand() {
+    public WorldCommand() {
         commandsHandler.register(new String[]{"reload", "r"}, new ReloadCommand());
         commandsHandler.register(new String[]{"create", "c"}, new WorldCreateCommand());
         commandsHandler.register(new String[]{"list", "ls"}, new WorldListCommand());

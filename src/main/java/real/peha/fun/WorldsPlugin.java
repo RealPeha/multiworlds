@@ -21,8 +21,8 @@ public class WorldsPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        this.getConfig().options().copyDefaults(true);
-        this.saveConfig();
+        getConfig().options().copyDefaults(true);
+        saveConfig();
         
         setInstance(this);
 
@@ -31,22 +31,28 @@ public class WorldsPlugin extends JavaPlugin {
         BlockPlaceListener.listen(this);
 
         // Register commands
-        commandsHandler.register(new String[]{"jopa"}, new WorldsPluginCommand());
+        commandsHandler.register(new String[]{"world", "wr"}, new WorldCommand());
 
-        Worlds.loadWorlds();
+        if (Config.getBoolean("worlds-preload")) {
+            Worlds.loadWorlds();
+        }
 
-        getLogger().info("Started");
+        getLogger().info("Hello wantid");
     }
 
     @Override
     public void onDisable() {
         this.saveConfig();
-
-        getLogger().info("Goodbye");
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String alias, String[] args) {
+        if (!sender.hasPermission("worldsplugin.usage")) {
+            sender.sendMessage(getConfig().getString("no-permission").replaceAll("&", "§"));
+
+            return true;
+        }
+
         String command = cmd.getName().toLowerCase();
 
         return commandsHandler.execute(sender, command, alias, args);

@@ -1,5 +1,6 @@
 package real.peha.fun;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -48,13 +49,6 @@ public class Config {
         return config().getStringList(path);
     }
 
-    public static void addToStringList(String path, String value) {
-        List<String> list = getStringList(path);
-
-        list.add(value);
-        config().set(path, list);
-    }
-
     public static String getRandomStringList(String path) {
         List<String> list = getStringList(path);
 
@@ -65,5 +59,48 @@ public class Config {
         int n = new Random().nextInt(list.size());
         
         return list.get(n);
+    }
+
+    public static Map<?, ?> find(String path, String key, String value) {
+        List<Map<?, ?>> listMap = getSection(path);
+
+        for (Map<?, ?> map : listMap) {
+            String mapValue = map.get(key).toString();
+
+            if (mapValue.equals(value)) {
+                return map;
+            }
+        }
+
+        return null;
+    }
+
+    public static void deleteFromList(String path, String key, String value) {
+        List<Map<?, ?>> listMap = getSection(path);
+
+        for (Iterator<Map<?, ?>> iter = listMap.iterator(); iter.hasNext(); ) {
+            Map<?, ?> map = iter.next();
+            String mapValue = map.get(key).toString();
+
+            if (mapValue.equals(value)) {
+                iter.remove();
+            }
+        }
+
+        Config.set(path, listMap);
+    }
+
+    public static void addToList(String path, Map<String, Object> map) {
+        List<Map<?, ?>> listMap = getSection(path);
+
+        listMap.add(map);
+        config().set(path, listMap);
+    }
+
+    public static void addToStringList(String path, String value) {
+        List<String> list = getStringList(path);
+
+        list.add(value);
+        config().set(path, list);
     }
 }

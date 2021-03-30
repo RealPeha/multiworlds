@@ -1,6 +1,5 @@
 package real.peha.fun;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -12,15 +11,15 @@ import org.bukkit.WorldType;
 import org.bukkit.command.CommandSender;
 
 public class Worlds {
-    public static String generate(Map<?, ?> worldConfig) {
-        return generate(null, worldConfig);
+    public static void generate(Map<?, ?> worldConfig) throws Exception {
+        generate(null, worldConfig);
     }
 
-    public static String generate(CommandSender sender, Map<?, ?> worldConfig) {
+    public static void generate(CommandSender sender, Map<?, ?> worldConfig) throws Exception {
         String worldId = worldConfig.get("id").toString();
 
         if (worldId.equals("logs") || worldId.equals("world") || worldId.equals("world_nether") || worldId.equals("world_the_end")) {
-            return "Нельзя создать мир с такими названием";
+            throw new Exception("Нельзя создать мир с такими названием");
         }
 
         Object type = worldConfig.get("type");
@@ -37,7 +36,7 @@ public class Worlds {
 
                 wc.environment(environment);
             } catch (Exception ex) {
-                return "Указано неправильное окружение";
+                throw new Exception("Указано неправильное окружение");
             }
         }
 
@@ -51,7 +50,7 @@ public class Worlds {
                     wc.generatorSettings(generatorSettings.toString());
                 }
             } catch (Exception ex) {
-                return "Указан неправильный тип мира";
+                throw new Exception("Указан неправильный тип мира");
             }
         }
 
@@ -66,10 +65,8 @@ public class Worlds {
         try {
             wc.createWorld();
         } catch (Exception ex) {
-            return "Произошла ошибка при генерации мира";
+            throw new Exception("Произошла ошибка при генерации мира");
         }
-
-        return null;
     }
 
     public static List<Map<?, ?>> getWorldsList() {
@@ -77,17 +74,7 @@ public class Worlds {
     }
 
     public static Map<?, ?> find(String worldId) {
-        List<Map<?, ?>> worlds = getWorldsList();
-
-        for (Map<?, ?> world : worlds) {
-            String id = world.get("id").toString().trim();
-
-            if (id.equals(worldId)) {
-                return world;
-            }
-        }
-
-        return null;
+        return Config.find("worlds", "id", worldId);
     }
 
     public static Boolean isExist(String worldId) {
@@ -103,25 +90,18 @@ public class Worlds {
     }
 
     public static void deleteFromList(String worldId) {
-        List<Map<?, ?>> worlds = getWorldsList();
-
-        for (Iterator<Map<?, ?>> iter = worlds.iterator(); iter.hasNext(); ) {
-            Map<?, ?> world = iter.next();
-            String id = world.get("id").toString().trim();
-
-            if (id.equals(worldId)) {
-                iter.remove();
-            }
-        }
-
-        Config.set("worlds", worlds);
+        Config.deleteFromList("worlds", "id", worldId);
     }
 
     public static void loadWorlds() {
+        loadWorlds(null);
+    }
+
+    public static void loadWorlds(CommandSender sender) {
         List<Map<?, ?>> worlds = Worlds.getWorldsList();
 
         for (Map<?, ?> world: worlds) {
-            Worlds.load(world.get("id").toString());
+            Worlds.load(sender, world.get("id").toString());
         }
     }
 
@@ -133,7 +113,11 @@ public class Worlds {
         Map<?, ?> world = find(worldId);
 
         if (world != null) {
-            generate(sender, world);
+            try {
+                generate(sender, world);
+            } catch (Exception ex) {
+                Bukkit.getLogger().warning(worldId + ": " + ex.getMessage());
+            }
         }
     }
 

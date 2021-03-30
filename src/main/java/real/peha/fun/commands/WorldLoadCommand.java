@@ -9,7 +9,11 @@ import real.peha.fun.Worlds;
 public class WorldLoadCommand implements BaseCommand {
     public Boolean execute(CommandSender sender, String command, String alias, String[] args) {
         if (args.length == 0) {
-            return false;
+            Worlds.loadWorlds(sender);
+
+            sender.sendMessage("Миры загружены успешно");
+
+            return true;
         }
 
         String worldId = args[0];

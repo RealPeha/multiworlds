@@ -5,15 +5,11 @@ author: RealPeha
 api-version: 1.16
 
 commands:
-  jopa:
-    usage: /<command> [reload]
+  world:
+    aliases: wr
+    usage: /<command> [reload|create|delete|info|load|unload|list|bed]
 
 permissions:
-  worldsplugin.*:
+  worldsplugin.usage:
     description: Дает доступ ко всем командам WorldsPlugin
-    default: false
-    children:
-      worldsplugin.reload: true
-  worldsplugin.reload:
-    description: Дает доступ к команде /rp reload
     default: op

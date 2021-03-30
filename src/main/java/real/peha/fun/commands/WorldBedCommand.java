@@ -20,7 +20,7 @@ public class WorldBedCommand implements BaseCommand {
         String worldId = args[0];
 
         if (!Worlds.isExist(worldId)) {
-            sender.sendMessage("Этот мир не найден");
+            sender.sendMessage("Мир " + worldId + " не найден");
 
             return true;
         }
@@ -29,7 +29,7 @@ public class WorldBedCommand implements BaseCommand {
         ItemStack stack = new ItemStack(Material.RED_BED);
         ItemMeta meta = stack.getItemMeta();
 
-        // meta.setDisplayName(worldId);
+        meta.setDisplayName("Кровать-телепорт");
         meta.setLore(Arrays.asList(worldId));
 
         stack.setItemMeta(meta);

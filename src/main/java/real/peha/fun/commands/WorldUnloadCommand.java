@@ -22,6 +22,8 @@ public class WorldUnloadCommand implements BaseCommand {
 
         Worlds.unload(worldId);
 
+        sender.sendMessage("Упех");
+
         return true;
     }
 }

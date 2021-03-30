@@ -59,15 +59,19 @@ public class WorldCreateCommand implements BaseCommand {
         worldConfig.put("generatorSettings", commandArgs.generatorSettings);
         worldConfig.put("generator", commandArgs.generator);
 
-        String result = Worlds.generate(sender, worldConfig);
+        sender.sendMessage("Мир генерируется...");
 
-        if (result != null) {
-            sender.sendMessage(result);
+        try {
+            Worlds.generate(sender, worldConfig);
+        } catch (Exception ex) {
+            sender.sendMessage("Ошибка: " + ex.getMessage());
 
             return true;
         }
 
         Worlds.addToList(worldConfig);
+
+        sender.sendMessage("Упех");
 
         return true;
     }
