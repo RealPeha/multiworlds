@@ -15,6 +15,7 @@ import org.bukkit.material.Bed;
 
 import real.peha.fun.Beds;
 import real.peha.fun.WorldsPlugin;
+import real.peha.fun.Config;
 
 public final class PlayerBedEnterListener implements Listener {
     public static void listen(WorldsPlugin plugin) {
@@ -25,6 +26,12 @@ public final class PlayerBedEnterListener implements Listener {
 
 	@EventHandler
 	public void PlayerBedEnter(PlayerBedEnterEvent e) {
+		Player player = e.getPlayer();
+
+		if (!player.hasPermission("worldsplugin.enter")) {
+            return;
+        }
+
 		Block block = e.getBed();
 		Bed bed = (Bed) block.getState().getData();
 
@@ -32,12 +39,10 @@ public final class PlayerBedEnterListener implements Listener {
 			? block.getLocation()
 			: block.getRelative(bed.getFacing()).getLocation();
 
-
 		String bedId = Beds.getId(bedLocation);
 		Map<?, ?> bedConfig = Beds.find(bedId);
 
 		if (bedConfig != null) {
-			Player player = e.getPlayer();
 			String worldId = bedConfig.get("worldId").toString();
 			World world = Bukkit.getServer().getWorld(worldId);
 

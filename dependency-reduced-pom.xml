@@ -4,7 +4,7 @@
   <groupId>real.peha.fun</groupId>
   <artifactId>WorldsPlugin</artifactId>
   <name>worlds-plugin</name>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
   <url>http://www.example.com</url>
   <build>
     <sourceDirectory>${project.basedir}/src/main/java</sourceDirectory>

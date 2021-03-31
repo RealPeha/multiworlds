@@ -13,3 +13,6 @@ permissions:
   worldsplugin.usage:
     description: Дает доступ ко всем командам WorldsPlugin
     default: op
+  worldsplugin.enter:
+    description: Дает право на вход в миры
+    default: op
